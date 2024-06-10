@@ -51,7 +51,7 @@ while keep_going:
         if sales_data[sales_data_indices.FOOD_CHARGE] >= transaction_const.MIN_SALES_AMT:
             # if valid, then calculate the tip amount by multiplying charge for food and tip percent
             sales_data[sales_data_indices.TIP] = round(
-                (sales_data[sales_data_indices.FOOD_CHARGE]) * transaction_const.TAX_PCT,
+                (sales_data[sales_data_indices.FOOD_CHARGE]) * transaction_const.TIP_PCT,
                 transaction_const.ROUND_PRECISION)
             # Calculate the sales tax amount by multiplying charge for food and tax percent
             sales_data[sales_data_indices.SALES_TAX] = round(
