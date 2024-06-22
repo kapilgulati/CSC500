@@ -3,7 +3,7 @@ Step 4: Build the ShoppingCart class with the following data attributes and rela
 Note: Some can be method stubs (empty methods) initially, to be completed in later steps
 
 """
-from item_to_purchase_gulati import ItemToPurchase
+from item_to_purchase_module6_gulati import ItemToPurchase
 
 # Dynamic attribute for the ItemToPurchase
 ITEM_DESCRIPTION_ATTR = "description"
