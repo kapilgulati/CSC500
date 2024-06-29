@@ -3,7 +3,9 @@ Step 4: Build the ShoppingCart class with the following data attributes and rela
 Note: Some can be method stubs (empty methods) initially, to be completed in later steps
 
 """
-from item_to_purchase_module6_gulati import ItemToPurchase
+from datetime import date
+
+from item_to_purchase_module6a_gulati import ItemToPurchase
 
 # Dynamic attribute for the ItemToPurchase
 ITEM_DESCRIPTION_ATTR = "description"
@@ -151,18 +153,50 @@ def print_menu():
     print(FORMAT_STRING.format(label="q - Quit"))
 
 
+def get_string_input(user_input, error_message):
+    while True:
+        try:
+            user_input_str = user_input
+            if len(user_input_str.strip()) == 0:
+                raise ValueError
+            break
+        except:
+            user_input = input(f"{error_message}, try again: ")
+    return user_input_str
+
+
+def get_float_input(user_input, error_message):
+    while True:
+        try:
+            user_input_float = float(user_input)
+            if user_input_float <= 0:
+                raise ValueError
+            break
+        except:
+            user_input = input(f"{error_message}, try again: ")
+    return user_input_float
+
+
+def get_integer_input(user_input, error_message):
+    while True:
+        try:
+            user_input_int = int(user_input)
+            if user_input_int <= 0:
+                raise ValueError
+            break
+        except:
+            user_input = input(f"{error_message}, try again: ")
+    return user_input_int
+
+
 def main():
+    # ask to enter customer name
+    customer_name = get_string_input(input("Enter customer name: "), "Invalid customer name")
+    transaction_date = date.today().strftime("%B %d, %Y")
+
     # prime the cart with sample data
-    shopping_cart = ShoppingCart("John Doe's Shopping Cart", "February 1, 2020")
-    item = ItemToPurchase("Nike Romaleos", 189, 2)
-    setattr(item, "description", "Volt color, Weightlifting shoes")
-    shopping_cart.add_item(item)
-    item = ItemToPurchase("Chocolate Chips", 3, 5)
-    setattr(item, "description", "Semi-sweet")
-    shopping_cart.add_item(item)
-    item = ItemToPurchase("Powerbeats 2 Headphones", 128, 1)
-    setattr(item, "description", "Bluetooth headphones")
-    shopping_cart.add_item(item)
+    shopping_cart = ShoppingCart(customer_name, transaction_date)
+
     # infinite loop, print menu and ask user to select a menu option
     while True:
         print_menu()
@@ -178,8 +212,18 @@ def main():
             # output cart totals
             shopping_cart.print_total()
             print("\n")
-        elif selected_menu in ['a', 'r', 'c']:
-            print(FORMAT_STRING.format(label="Menu option not supported try q, i or o option"))
+        elif selected_menu == "a":
+            # output cart totals
+            item_name = get_string_input(input("Enter item name: "), "Invalid item name")
+            item_description = get_string_input(input("Enter item description: "), "Invalid item description")
+            item_price = get_float_input(input("Enter item price: "), "Invalid item price")
+            item_quantity = get_integer_input(input("Enter item quantity: "), "Invalid item quantity")
+            item = ItemToPurchase(item_name, item_price, item_quantity)
+            setattr(item, "description", item_description)
+            shopping_cart.add_item(item)
+            print("\n")
+        elif selected_menu in ['r', 'c']:
+            print(FORMAT_STRING.format(label="Menu option not supported try q, i , a or o option"))
             print("\n")
         else:
             print(FORMAT_STRING.format(label="Enter a valid menu option"))
@@ -189,4 +233,3 @@ def main():
 # Tests class implementation
 if __name__ == "__main__":
     main()
-
