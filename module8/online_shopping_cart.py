@@ -16,11 +16,16 @@ Shopping Cart
 In addition, the solution will have main method and convenience methods to simulate online experience
 
 """
+
+
 from datetime import date
-from typing import List, Any
 
 # Format string global variable
-FORMAT_STRING = "{label:^50}"
+FRMT_STR = "{label:^50}"
+
+
+def format_output(label_str):
+    return FRMT_STR.format(label=label_str)
 
 
 """
@@ -70,8 +75,8 @@ class ItemToPurchase:
         """
         # format using positional replacement
         print(
-            FORMAT_STRING.format(
-                label="{0} {1} @ ${2:.2f} = ${3:.2f}".format(
+            format_output(
+                "{0} {1} @ ${2:.2f} = ${3:.2f}".format(
                     self.item_name,
                     self.item_quantity,
                     self.item_price,
@@ -86,11 +91,7 @@ class ItemToPurchase:
         :return: does not return anything
         """
         # format using inferred positional replacement
-        print(
-            FORMAT_STRING.format(
-                label="{}: {}".format(self.item_name, self.item_description)
-            )
-        )
+        print(format_output("{}: {}".format(self.item_name, self.item_description)))
 
 
 """
@@ -106,7 +107,10 @@ class ShoppingCart:
     """
 
     def __init__(
-        self, customer_name="none", current_date="January 1, 2020", cart_items=None
+        self,
+        customer_name="none",
+        current_date="January 1, 2020",
+        cart_items: list[ItemToPurchase] = None,
     ):
         """
         Parameterized default constructor, has the following data attributes:
@@ -130,7 +134,7 @@ class ShoppingCart:
         :return: int
             index of the item matching the given name value, returns "-1" if not found
         """
-        item_to_purchase: ItemToPurchase
+
         for pos, item_to_purchase in enumerate(self.cart_items):
             if item_to_purchase.item_name == item_name:
                 return pos
@@ -139,8 +143,7 @@ class ShoppingCart:
     def add_item(self, item_to_purchase):
         """
         This method adds the given item to purchase in the cart_items list.
-        :param item_to_purchase: ItemToPurchase
-            Object of type ItemToPurchase
+        :param item_to_purchase: Object of type ItemToPurchase
         :return: no value is returned
         """
         self.cart_items.append(item_to_purchase)
@@ -159,15 +162,15 @@ class ShoppingCart:
             self.cart_items.pop(item_index)
             # print(f"Item removed from cart: {item_name}")
         else:
-            print("Item not found in cart. Nothing removed.")
+            print(format_output("Item not found in cart. Nothing removed."))
 
-    def modify_item(self, item_to_purchase: ItemToPurchase):
+    def modify_item(self, item_to_purchase):
         """
         This method first checks the given item to purchase has default values for description, price and quantity,
         if no then it calls __find_item_by_name() to find a matching item in the cart.
         If a match is found, it updates the matching item's description, price, and/ or quantity with the given values.
         If no match is found, then it output this message: "Item not found in the cart. Nothing modified."
-        :param item_to_purchase: ItemToPurchase
+        :param item_to_purchase: Object of type ItemToPurchase
         :return: no value is returned.
         """
 
@@ -189,7 +192,7 @@ class ShoppingCart:
             if item_to_purchase.item_price != ItemToPurchase.default_item_price:
                 self.cart_items[item_index].item_price = item_to_purchase.item_price
         else:
-            print("Item not found in cart. Nothing modified.")
+            print(format_output("Item not found in cart. Nothing modified."))
 
     def get_num_items_in_cart(self):
         """
@@ -197,7 +200,6 @@ class ShoppingCart:
         :return: int = total quantity of all items in the cart
         """
         cart_quantity = 0
-        item_to_purchase: ItemToPurchase
         for item_to_purchase in self.cart_items:
             cart_quantity += item_to_purchase.item_quantity
         return cart_quantity
@@ -209,7 +211,6 @@ class ShoppingCart:
         :return: float = total cost of items in cart
         """
         cart_total = 0.0
-        item_to_purchase: ItemToPurchase
         for item_to_purchase in self.cart_items:
             cart_total += item_to_purchase.calculate_cost()
         return cart_total
@@ -225,25 +226,17 @@ class ShoppingCart:
         :return: Does not return anything.
         """
         if len(self.cart_items) > 0:
-            print(FORMAT_STRING.format(label="OUTPUT SHOPPING CART"))
+            print(format_output("OUTPUT SHOPPING CART"))
             print(
-                FORMAT_STRING.format(
-                    label=f"{self.customer_name}'s Shopping Cart - {self.current_date}"
+                format_output(
+                    f"{self.customer_name}'s Shopping Cart - {self.current_date}"
                 )
             )
-            print(
-                FORMAT_STRING.format(
-                    label=f"Number of Items: {self.get_num_items_in_cart()}"
-                )
-            )
+            print(format_output(f"Number of Items: {self.get_num_items_in_cart()}"))
             c_item: ItemToPurchase
             for c_item in self.cart_items:
                 c_item.print_item_cost()
-            print(
-                FORMAT_STRING.format(
-                    label="Total: ${:.2f}".format(self.get_cost_of_cart())
-                )
-            )
+            print(format_output("Total: ${:.2f}".format(self.get_cost_of_cart())))
         else:
             print("SHOPPING CART IS EMPTY")
 
@@ -252,13 +245,11 @@ class ShoppingCart:
         Outputs/displays cart title and each item's description in the cart
         :return: Does not return anything
         """
-        print(FORMAT_STRING.format(label="OUTPUT ITEMS' DESCRIPTIONS"))
+        print(format_output("OUTPUT ITEMS' DESCRIPTIONS"))
         print(
-            FORMAT_STRING.format(
-                label=f"{self.customer_name}'s Shopping Cart - {self.current_date}"
-            )
+            format_output(f"{self.customer_name}'s Shopping Cart - {self.current_date}")
         )
-        print(FORMAT_STRING.format(label="Item Descriptions"))
+        print(format_output("Item Descriptions"))
         cart_item: ItemToPurchase
         for cart_item in self.cart_items:
             cart_item.print_item_description()
@@ -274,46 +265,44 @@ Convenience functions to validate user input.
 def get_string_input(user_input_prompt, format_prompt=True):
     while True:
         if format_prompt:
-            user_input_str = input(
-                FORMAT_STRING.format(label=f"{user_input_prompt}\n{chr(187)} ")
-            )
+            user_input = input(format_output(f"{user_input_prompt}\n"))
         else:
-            user_input_str = input(f"{user_input_prompt}\n{chr(187)} ")
+            user_input = input(f"{user_input_prompt}\n{chr(187)} ")
 
-        if len(user_input_str.strip()) == 0:
+        if len(user_input.strip()) == 0:
             print("invalid input, try again...")
         else:
-            return user_input_str
+            return user_input
 
 
-def get_float_input(user_input_prompt):
+def get_float_input(user_input_prompt, format_prompt=True):
     while True:
         try:
-            user_input_float = float(
-                input(FORMAT_STRING.format(label=f"{user_input_prompt}\n{chr(187)} "))
-            )
-            if user_input_float <= 0:
+            if format_prompt:
+                user_input = float(input(format_output(f"{user_input_prompt}\n")))
+            else:
+                user_input = float(input(f"{user_input_prompt}\n{chr(187)} "))
+            if user_input <= 0:
                 raise ValueError
             break
         except:
             print("invalid input, try again...")
+    return user_input
 
-    return user_input_float
 
-
-def get_int_input(user_input_prompt):
+def get_int_input(user_input_prompt, format_prompt=True):
     while True:
         try:
-            user_input_float = int(
-                input(FORMAT_STRING.format(label=f"{user_input_prompt}\n{chr(187)} "))
-            )
-            if user_input_float <= 0:
+            if format_prompt:
+                user_input = int(input(format_output(f"{user_input_prompt}\n")))
+            else:
+                user_input = int(input(f"{user_input_prompt}\n{chr(187)} "))
+            if user_input <= 0:
                 raise ValueError
             break
         except:
             print("invalid input, try again...")
-
-    return user_input_float
+    return user_input
 
 
 """
@@ -326,15 +315,17 @@ Function to prompt menu
 def print_menu(shopping_cart: ShoppingCart):
     show_menu = True
 
+    # nested function to print menu if user enters m option at the prompt
     def menu():
-        print(FORMAT_STRING.format(label="MENU"))
-        print(FORMAT_STRING.format(label="a - Add item to cart"))
-        print(FORMAT_STRING.format(label="r - Remove item from cart"))
-        print(FORMAT_STRING.format(label="c - Change item quantity"))
-        print(FORMAT_STRING.format(label="i - Output items' descriptions"))
-        print(FORMAT_STRING.format(label="o - Output shopping cart"))
-        print(FORMAT_STRING.format(label="q - Quit"))
+        print(format_output("MENU"))
+        print(format_output("a - Add item to cart"))
+        print(format_output("r - Remove item from cart"))
+        print(format_output("c - Change item quantity"))
+        print(format_output("i - Output items' descriptions"))
+        print(format_output("o - Output shopping cart"))
+        print(format_output("q - Quit"))
 
+    # while customer exits using the q command
     while True:
         if show_menu:
             menu()
@@ -342,19 +333,23 @@ def print_menu(shopping_cart: ShoppingCart):
 
         selected_menu = get_string_input(f"Choose an option:")
         if selected_menu == "q":
-            print(FORMAT_STRING.format(label="QUIT"))
+            print(format_output("QUIT"))
             # quit loop
             break
         elif selected_menu == "i":
             # output cart description
             shopping_cart.print_descriptions()
-            print("\n")
+            print(
+                format_output("Enter a menu option, or press 'm' to see menu again.\n")
+            )
         elif selected_menu == "o":
             # output cart totals
             shopping_cart.print_total()
-            print("\n")
+            print(
+                format_output("Enter a menu option, or press 'm' to see menu again.\n")
+            )
         elif selected_menu == "a":
-            print(FORMAT_STRING.format(label="ADD ITEM TO CART"))
+            print(format_output("ADD ITEM TO CART"))
             # ask user to enter an item, then add the item to the cart
             item_name = get_string_input("Enter item name:")
             item_description = get_string_input("Enter the item description:")
@@ -363,27 +358,39 @@ def print_menu(shopping_cart: ShoppingCart):
             shopping_cart.add_item(
                 ItemToPurchase(item_name, item_price, item_quantity, item_description)
             )
-            print("Item added to cart.\n")
+            print(
+                format_output(
+                    "Item added to cart. Enter a menu option, or press 'm' to see menu again.\n"
+                )
+            )
         elif selected_menu == "r":
-            print(FORMAT_STRING.format(label="REMOVE ITEM FROM CART"))
+            print(format_output("REMOVE ITEM FROM CART"))
             # remove item
             item_to_remove = get_string_input("Enter name of item to remove:")
             shopping_cart.remove_item(item_to_remove)
-            print("\n")
+            print(
+                format_output("Enter a menu option, or press 'm' to see menu again.\n")
+            )
         elif selected_menu == "c":
             # change quantity
-            print(FORMAT_STRING.format(label="CHANGE ITEM QUANTITY"))
+            print(format_output("CHANGE ITEM QUANTITY"))
             item_name = get_string_input("Enter the item name:")
             item_quantity = get_int_input("Enter the new quantity:")
             shopping_cart.modify_item(
                 ItemToPurchase(item_name=item_name, item_quantity=item_quantity)
             )
-            print("\n")
+            print(
+                format_output("Enter a menu option, or press 'm' to see menu again.\n")
+            )
         elif selected_menu == "m":
             # show menu
             show_menu = True
         else:
-            print(FORMAT_STRING.format(label="Enter a valid menu option"))
+            print(
+                format_output(
+                    "Enter a valid menu option, or press 'm' to see menu again.\n"
+                )
+            )
             print("\n")
 
 
@@ -395,21 +402,14 @@ Main method
 
 
 def main():
-    # Milestone #1 needs formatting
-    # items_to_purchase = [prompt_item_to_purchase(), prompt_item_to_purchase()]
-    # total_cost = 0
-    # print(FORMAT_STRING.format(label="TOTAL COST"))
-    # for item_to_purchase in items_to_purchase:
-    #     total_cost = total_cost + item_to_purchase.calculate_cost()
-    #     item_to_purchase.print_item_cost()
-    # print(FORMAT_STRING.format(label=f"Total: ${total_cost:.2f}"))
-    # Milestone #2 needs formatting
-    # prompt for customer name
+    # ask to enter customer's name
     customer_name = get_string_input("Enter customer's name: ", False)
     current_date = date.today().strftime("%B %d, %Y")
-    cart_date = get_string_input(f"Enter today's date (ex {current_date}): ", False)
-
+    # ask to enter today's date
+    cart_date = get_string_input(f"Enter today's date (ex. {current_date}): ", False)
+    # initialize shopping cart object
     shopping_cart = ShoppingCart(customer_name, cart_date)
+    # call print menu (print menu has the loop)
     print_menu(shopping_cart)
 
 
