@@ -25,6 +25,11 @@ FRMT_STR = "{label:^50}"
 
 
 def format_output(label_str):
+    """
+    Formats the string to be printed on the console.
+    :param label_str: string value to be printed
+    :return:
+    """
     return FRMT_STR.format(label=label_str)
 
 
@@ -265,12 +270,13 @@ Convenience functions to validate user input.
 def get_string_input(user_input_prompt, format_prompt=True):
     while True:
         if format_prompt:
-            user_input = input(format_output(f"{user_input_prompt}\n"))
+            print(format_output(f"{user_input_prompt}"))
+            user_input = input(f"{chr(187)}\t")
         else:
             user_input = input(f"{user_input_prompt}\n{chr(187)} ")
 
         if len(user_input.strip()) == 0:
-            print("invalid input, try again...")
+            print(format_output("invalid input, try again..."))
         else:
             return user_input
 
@@ -279,14 +285,15 @@ def get_float_input(user_input_prompt, format_prompt=True):
     while True:
         try:
             if format_prompt:
-                user_input = float(input(format_output(f"{user_input_prompt}\n")))
+                print(format_output(f"{user_input_prompt}"))
+                user_input = float(input(f"{chr(187)}\t"))
             else:
                 user_input = float(input(f"{user_input_prompt}\n{chr(187)} "))
             if user_input <= 0:
                 raise ValueError
             break
         except:
-            print("invalid input, try again...")
+            print(format_output("invalid input, try again..."))
     return user_input
 
 
@@ -294,14 +301,15 @@ def get_int_input(user_input_prompt, format_prompt=True):
     while True:
         try:
             if format_prompt:
-                user_input = int(input(format_output(f"{user_input_prompt}\n")))
+                print(format_output(f"{user_input_prompt}"))
+                user_input = int(input(f"{chr(187)}\t"))
             else:
                 user_input = int(input(f"{user_input_prompt}\n{chr(187)} "))
             if user_input <= 0:
                 raise ValueError
             break
         except:
-            print("invalid input, try again...")
+            print(format_output("invalid input, try again..."))
     return user_input
 
 
@@ -315,20 +323,17 @@ Function to prompt menu
 def print_menu(shopping_cart: ShoppingCart):
     show_menu = True
 
-    # nested function to print menu if user enters m option at the prompt
-    def menu():
-        print(format_output("MENU"))
-        print(format_output("a - Add item to cart"))
-        print(format_output("r - Remove item from cart"))
-        print(format_output("c - Change item quantity"))
-        print(format_output("i - Output items' descriptions"))
-        print(format_output("o - Output shopping cart"))
-        print(format_output("q - Quit"))
-
     # while customer exits using the q command
     while True:
+        # only show menu if it is the first run of the loop or if customer enters 'm'
         if show_menu:
-            menu()
+            print(format_output("MENU"))
+            print(format_output("a - Add item to cart"))
+            print(format_output("r - Remove item from cart"))
+            print(format_output("c - Change item quantity"))
+            print(format_output("i - Output items' descriptions"))
+            print(format_output("o - Output shopping cart"))
+            print(format_output("q - Quit"))
             show_menu = False
 
         selected_menu = get_string_input(f"Choose an option:")
@@ -403,12 +408,16 @@ Main method
 
 def main():
     # ask to enter customer's name
-    customer_name = get_string_input("Enter customer's name: ", False)
-    current_date = date.today().strftime("%B %d, %Y")
+    customer_name = get_string_input("Enter customer's name: ")
+    example_date = date.today().strftime("%B %d, %Y")
     # ask to enter today's date
-    cart_date = get_string_input(f"Enter today's date (ex. {current_date}): ", False)
+    current_date = get_string_input(f"Enter today's date (ex. {example_date}): ")
+    # Output customer name and date
+    print(format_output(f"Customer name: {customer_name}"))
+    print(format_output(f"Today's date: {current_date}"))
+    print(format_output("=" * 30))
     # initialize shopping cart object
-    shopping_cart = ShoppingCart(customer_name, cart_date)
+    shopping_cart = ShoppingCart(customer_name, current_date)
     # call print menu (print menu has the loop)
     print_menu(shopping_cart)
 
